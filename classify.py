@@ -10,6 +10,7 @@ files = os.listdir(output_path)
 for file in files:
 
     include_encoding = face_recognition.face_encodings(include_image)[0]
+    exclude_encoding = face_recognition.face_encodings(exclude_image)[0]
     
     unknown_path = output_path+"/"+file
     
