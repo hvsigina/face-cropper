@@ -2,6 +2,7 @@ import mediapipe as mp
 import numpy as np
 import cv2
 
+np.int = np.int32
 
 # Indices for the relevant landmarks
 _LEFT_EYE_LANDMARK_INDICES = [362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385, 384, 398]
@@ -310,7 +311,7 @@ def _get_inflated_face_image(image, face_box, inflation):
     """
 
     width_inflation, height_inflation = face_box.width * inflation, face_box.height * inflation
-
+    
     return _crop_within_bounds(
         image,
         round((face_box.ymin - height_inflation / 2) * image.shape[0]),                    # top
@@ -458,6 +459,10 @@ def _crop_within_bounds(image, top, bottom, left, right):
     :param right: Maximum integer x coordinate of the crop boundary.
     :return: The cropped image.
     """
+    top = int(top*9/10)
+    bottom = int(bottom*10/9)
+    left = int(left*9/10)
+    right = int(right*10/9)
 
     if top < 0: top = 0
     elif top >= image.shape[0]: top = image.shape[0] - 1
@@ -558,11 +563,12 @@ class FaceCropper:
 
         detected_faces = self.face_detector.process(image).detections
         if detected_faces is None: return face_images
-
+        
         for face in detected_faces:
             # The mp.solutions.face_detection.FaceDetection network may rarely 'find' a face completely outside the image, so ignore those
             if 0 <= face.location_data.relative_bounding_box.xmin <= 1 and 0 <= face.location_data.relative_bounding_box.ymin <= 1:
                 inflation_factor = _get_bounding_box_inflation_factor(face.location_data.relative_keypoints[:2])
+                #inflation_factor+= (50*inflation_factor)/100
                 inflated_face_image = _get_inflated_face_image(image, face.location_data.relative_bounding_box, inflation_factor)
                 detected_landmarks = self.landmark_detector.process(inflated_face_image).multi_face_landmarks
 
@@ -666,6 +672,7 @@ class FaceCropper:
             # The mp.solutions.face_detection.FaceDetection network may rarely 'find' a face completely outside the image, so ignore those
             if 0 <= face.location_data.relative_bounding_box.xmin <= 1 and 0 <= face.location_data.relative_bounding_box.ymin <= 1:
                 inflation_factor = _get_bounding_box_inflation_factor(face.location_data.relative_keypoints[:2])
+                #inflation_factor+= (50*inflation_factor)/100
                 inflated_face_image = _get_inflated_face_image(image, face.location_data.relative_bounding_box, inflation_factor)
                 detected_landmarks = self.landmark_detector.process(inflated_face_image).multi_face_landmarks
 

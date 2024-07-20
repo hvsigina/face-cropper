@@ -6,7 +6,7 @@ face_cropper = FaceCropper()
 image_bgr = cv2.imread('demo_1.jpg')
 if image_bgr is None: raise RuntimeError('Image could not be read')
 
-faces_rgb = face_cropper.get_faces(cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB))
+faces_rgb = face_cropper.get_faces(cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB),remove_background=True, correct_roll=True)
 
 if not faces_rgb:
     print("No faces detected")

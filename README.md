@@ -1,3 +1,5 @@
+Fork to make it work 2024, batch image processing, face recognition. Select face to include and exclude to fine tune cropped image results.
+
 # Contents
 - [Demos](https://github.com/tsen-dev/face-cropper#demos)
 - [Overview](https://github.com/tsen-dev/face-cropper#overview)
